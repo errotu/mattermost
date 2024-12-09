@@ -61,6 +61,7 @@ type MenuProps = {
     onToggle?: (isOpen: boolean) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLDivElement>, forceCloseMenu?: () => void) => void;
     width?: string;
+    isMenuOpen?: boolean;
 }
 
 const defaultAnchorOrigin = {vertical: 'bottom', horizontal: 'left'};
@@ -168,6 +169,8 @@ export function Menu(props: Props) {
                         onModalClose: handleMenuModalClose,
                         children: props.children,
                         onKeyDown: props.menu.onKeyDown,
+                        menuHeader: props.menuHeader,
+                        menuFooter: props.menuFooter,
                     },
                 }),
             );
@@ -217,6 +220,12 @@ export function Menu(props: Props) {
         }
     }, [isMenuOpen]);
 
+    useEffect(() => {
+        if (props.menu.isMenuOpen === false) {
+            setAnchorElement(null);
+        }
+    }, [props.menu.isMenuOpen]);
+
     const providerValue = useMenuContextValue(closeMenu, Boolean(anchorElement));
 
     if (isMobileView) {
@@ -229,6 +238,7 @@ export function Menu(props: Props) {
             {renderMenuButton()}
             <MenuContext.Provider value={providerValue}>
                 <MuiPopoverStyled
+                    aria-label={props.menu?.['aria-label'] ?? ''}
                     anchorEl={anchorElement}
                     open={isMenuOpen}
                     onClose={handleMenuClose}
@@ -270,6 +280,8 @@ interface MenuModalProps {
     onModalClose: (modalId: MenuProps['id']) => void;
     children: Props['children'];
     onKeyDown?: MenuProps['onKeyDown'];
+    menuHeader?: Props['menuHeader'];
+    menuFooter?: Props['menuFooter'];
 }
 
 function MenuModal(props: MenuModalProps) {
@@ -314,7 +326,9 @@ function MenuModal(props: MenuModalProps) {
                     aria-labelledby={props.menuButtonId}
                     onClick={handleModalClickCapture}
                 >
+                    {props.menuHeader}
                     {props.children}
+                    {props.menuFooter}
                 </MuiMenuList>
             </GenericModal>
         </CompassDesignProvider>
