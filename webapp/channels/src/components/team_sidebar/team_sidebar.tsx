@@ -264,6 +264,7 @@ export default class TeamSidebar extends React.PureComponent<Props, State> {
                     }
                     content={plusIcon}
                     switchTeam={this.props.actions.switchTeam}
+                    displayName='Others teams you can join'
                 />,
             );
         } else {
