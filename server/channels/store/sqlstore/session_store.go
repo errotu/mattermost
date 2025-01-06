@@ -148,7 +148,7 @@ func (me SqlSessionStore) GetLRUSessions(c request.CTX, userId string, limit uin
 func (me SqlSessionStore) GetSessionsWithActiveDeviceIds(userId string) ([]*model.Session, error) {
 	lastRemovedQuery := `DeviceId != COALESCE(Props->>'last_removed_device_id', '')`
 	if me.DriverName() == model.DatabaseDriverMysql {
-		lastRemovedQuery = `DeviceId != COALESCE(Props->>'$.last_removed_device_id', '')`
+		lastRemovedQuery = `DeviceId != COALESCE(JSON_UNQUOTE(JSON_EXTRACT(Props, '$.last_removed_device_id')), '');
 	}
 	query :=
 		`SELECT *
